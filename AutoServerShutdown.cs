@@ -15,14 +15,19 @@ namespace AutoServerShutdown {
 
         private const long ms_to_connect = 2 * 60 * 1000;
 
+        private Thread autoShutdown;
         public override void OnStart() {
-            Thread autoShutdown = new Thread(() => {
+            autoShutdown = new Thread(() => {
                 long time_til_shutdown = ms_to_connect;
-                while(time_til_shutdown > 0) { 
-                    if(ModManager.serverInstance.connectedClients > 0) {
-                        Log.Debug("AutoShutdown", "Connected in time.");
-                        return;
-                    }
+                while(time_til_shutdown > 0) {
+                    if(ModManager.serverInstance == null) return;
+
+                    try {
+                        if(ModManager.serverInstance.connectedClients > 0) {
+                            Log.Debug("AutoShutdown", "Connected in time.");
+                            return;
+                        }
+                    }catch(NullReferenceException) { }
 
                     if(time_til_shutdown % 30000 == 0) {
                         Log.Debug("AutoShutdown", $"Time left: {time_til_shutdown / 1000}s");
@@ -38,7 +43,7 @@ namespace AutoServerShutdown {
         }
 
         public override void OnStop() {
-            
+            autoShutdown.Abort();
         }
 
         public override void OnPlayerQuit(AMP.Network.Data.ClientData client) {
@@ -50,6 +55,7 @@ namespace AutoServerShutdown {
         private void StopStuff() {
             Log.Debug("AutoShutdown", "Stopping server...");
 
+            autoShutdown.Abort();
             CommandHandler.GetCommandHandler("stop").Process(new string[0]);
             Program.serverThread.Abort();
             Environment.Exit(0);
