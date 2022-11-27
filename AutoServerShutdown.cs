@@ -55,10 +55,12 @@ namespace AutoServerShutdown {
         private void StopStuff() {
             Log.Debug("AutoShutdown", "Stopping server...");
 
-            autoShutdown.Abort();
-            CommandHandler.GetCommandHandler("stop").Process(new string[0]);
-            Program.serverThread.Abort();
-            Environment.Exit(0);
+            new Thread(() => {
+                CommandHandler.GetCommandHandler("stop").Process(new string[0]);
+                Program.serverThread.Abort();
+                Environment.Exit(0);
+                autoShutdown.Abort();
+            }).Start();
         }
     }
 }
