@@ -2,8 +2,6 @@
 using AMP.DedicatedServer;
 using AMP.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace AutoServerShutdown {
@@ -19,6 +17,7 @@ namespace AutoServerShutdown {
         public override void OnStart() {
             autoShutdown = new Thread(() => {
                 long time_til_shutdown = ms_to_connect;
+                Thread.Sleep(2000);
                 while(time_til_shutdown > 0) {
                     if(ModManager.serverInstance == null) return;
 
@@ -39,6 +38,7 @@ namespace AutoServerShutdown {
 
                 StopStuff();
             });
+            autoShutdown.Name = "AutoShutdown";
             autoShutdown.Start();
         }
 
@@ -55,12 +55,14 @@ namespace AutoServerShutdown {
         private void StopStuff() {
             Log.Debug("AutoShutdown", "Stopping server...");
 
-            new Thread(() => {
+            Thread shuttingDown = new Thread(() => {
                 CommandHandler.GetCommandHandler("stop").Process(new string[0]);
                 Program.serverThread.Abort();
                 Environment.Exit(0);
                 autoShutdown.Abort();
-            }).Start();
+            });
+            shuttingDown.Name = "AutoShutdown Shutdown";
+            shuttingDown.Start();
         }
     }
 }
