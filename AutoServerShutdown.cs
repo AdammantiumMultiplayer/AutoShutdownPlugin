@@ -11,7 +11,7 @@ namespace AutoServerShutdown {
         public override string AUTHOR => "Adammantium";
         public override string VERSION => "1.0.0";
 
-        private const long ms_to_connect = 2 * 60 * 1000;
+        private const long ms_to_connect = 5 * 60 * 1000;
 
         private Thread autoShutdown;
         public override void OnStart() {
@@ -36,7 +36,7 @@ namespace AutoServerShutdown {
                     time_til_shutdown -= 1000;
                 }
 
-                StopStuff();
+                ShutdownServer();
             });
             autoShutdown.Name = "AutoShutdown";
             autoShutdown.Start();
@@ -48,16 +48,16 @@ namespace AutoServerShutdown {
 
         public override void OnPlayerQuit(AMP.Network.Data.ClientData client) {
             if(ModManager.serverInstance.connectedClients == 0) {
-                StopStuff();
+                ShutdownServer();
             }
         }
 
-        private void StopStuff() {
+        private void ShutdownServer() {
             Log.Debug("AutoShutdown", "Stopping server...");
 
             Thread shuttingDown = new Thread(() => {
                 CommandHandler.GetCommandHandler("stop").Process(new string[0]);
-                Program.serverThread.Abort();
+                ServerInit.serverThread.Abort();
                 Environment.Exit(0);
                 autoShutdown.Abort();
             });
