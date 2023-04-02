@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Netamite">
+      <HintPath>..\..\Netamite\Netamite.Base\bin\Debug\Netamite.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Adammantium Multiplayer Mod\Adammantium Multiplayer Mod.csproj">
-      <Project>{98eed107-d836-466f-ae3e-7cb1e552bd62}</Project>
+      <Project>{98EED107-D836-466F-AE3E-7CB1E552BD62}</Project>
       <Name>Adammantium Multiplayer Mod</Name>
     </ProjectReference>
     <ProjectReference Include="..\Server\Server.csproj">

@@ -1,6 +1,7 @@
 ﻿using AMP;
 using AMP.DedicatedServer;
 using AMP.Logging;
+using Netamite.Server.Data;
 using System;
 using System.Threading;
 
@@ -46,7 +47,7 @@ namespace AutoServerShutdown {
             autoShutdown.Abort();
         }
 
-        public override void OnPlayerQuit(AMP.Network.Data.ClientData client) {
+        public override void OnPlayerQuit(ClientInformation client) {
             if(ModManager.serverInstance.connectedClients == 0) {
                 ShutdownServer();
             }
@@ -57,7 +58,6 @@ namespace AutoServerShutdown {
 
             Thread shuttingDown = new Thread(() => {
                 CommandHandler.GetCommandHandler("stop").Process(new string[0]);
-                ServerInit.serverThread.Abort();
                 Environment.Exit(0);
                 autoShutdown.Abort();
             });
